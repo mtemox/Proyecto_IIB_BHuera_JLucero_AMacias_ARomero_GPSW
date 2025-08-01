@@ -19,6 +19,11 @@ const Vault = () => {
   const [loading, setLoading] = useState(true);
   const { currentUser } = useAuth();
 
+  // --- INICIO DE CAMBIOS ---
+  const [searchTerm, setSearchTerm] = useState(''); // 👈 NUEVO: Estado para el término de búsqueda
+  const [filteredCredentials, setFilteredCredentials] = useState([]); // 👈 NUEVO: Estado para las credenciales filtradas
+  // --- FIN DE CAMBIOS ---
+
   // Leer credenciales en tiempo real
   useEffect(() => {
     if (!currentUser) return;
@@ -36,6 +41,17 @@ const Vault = () => {
 
     return () => unsubscribe(); // Limpiar el listener al desmontar
   }, [currentUser]);
+
+  // --- INICIO DE CAMBIOS ---
+  // 👈 NUEVO: useEffect para filtrar las credenciales cuando cambia la búsqueda o la lista original
+  useEffect(() => {
+    const results = credentials.filter(cred =>
+      cred.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      cred.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCredentials(results);
+  }, [searchTerm, credentials]);
+  // --- FIN DE CAMBIOS ---
 
   // Guardar nueva credencial
   const handleSaveCredential = async (data) => {
@@ -88,19 +104,34 @@ const Vault = () => {
 
       <div className="search-bar-wrapper">
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
-        <input type="text" placeholder="Buscar credenciales..." className="search-input" />
+        {/* 👇 CONECTA EL INPUT AL ESTADO */}
+        <input
+          type="text"
+          placeholder="Buscar por nombre o correo..."
+          className="search-input"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="credentials-list">
-        {loading ? ( <p>Cargando...</p> ) : credentials.length === 0 ? ( <p>No tienes credenciales guardadas.</p> ) : (
-          credentials.map(cred => (
+        {loading ? (
+          <p className="status-text">Cargando...</p>
+        ) : credentials.length === 0 ? (
+          <p className="status-text">No tienes credenciales guardadas.</p>
+        // 👇 MUESTRA UN MENSAJE SI NO HAY RESULTADOS DE BÚSQUEDA
+        ) : filteredCredentials.length === 0 ? (
+          <p className="status-text">No se encontraron resultados para "{searchTerm}".</p>
+        ) : (
+          // 👇 RENDERIZA LA LISTA FILTRADA
+          filteredCredentials.map(cred => (
             <CredentialItem
               key={cred.id}
               icon={faGlobe}
               name={cred.name}
               email={cred.email}
               encryptedPassword={cred.password}
-              onDelete={() => openDeleteConfirm(cred.id)} // 👈 PASA LA FUNCIÓN AL ITEM
+              onDelete={() => openDeleteConfirm(cred.id)}
             />
           ))
         )}
