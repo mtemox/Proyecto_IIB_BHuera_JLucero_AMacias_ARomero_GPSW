@@ -1,13 +1,13 @@
 // src/components/Vault/CredentialItem.jsx
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faEyeSlash, faCopy, faTrash, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faCopy, faTrash, faCheck, faPencilAlt } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../context/AuthContext';
 import { decryptData } from '../../utils/encryption';
 import './CredentialItem.css';
 
 // Recibimos la contraseña encriptada como 'encryptedPassword'
-const CredentialItem = ({ icon, name, email, encryptedPassword, onDelete  }) => {
+const CredentialItem = ({ icon, name, email, encryptedPassword, onEdit, onDelete  }) => {
   const [isRevealed, setIsRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
   const { currentUser } = useAuth();
@@ -46,6 +46,9 @@ const CredentialItem = ({ icon, name, email, encryptedPassword, onDelete  }) => 
         </button>
         <button className="action-button" title={isRevealed ? 'Ocultar' : 'Mostrar'} onClick={handleToggleReveal}>
           <FontAwesomeIcon icon={isRevealed ? faEyeSlash : faEye} />
+        </button>
+        <button className="action-button" title="Editar" onClick={onEdit}>
+          <FontAwesomeIcon icon={faPencilAlt} />
         </button>
         <button className="action-button delete" title="Eliminar" onClick={onDelete}>
           <FontAwesomeIcon icon={faTrash} />

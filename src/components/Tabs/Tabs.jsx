@@ -10,17 +10,22 @@ import Tools from '../Tools/Tools';
 const ToolsContent = () => <div className="tab-content">Contenido de Herramientas</div>;
 
 const Tabs = () => {
+
+  // 👇 NUEVO: Estado para guardar la contraseña generada
+  const [generatedPassword, setGeneratedPassword] = useState('');
   const [activeTab, setActiveTab] = useState('vault');
 
   const renderContent = () => {
     switch (activeTab) {
       case 'generator':
-        return <Generator />; // <--- USA EL COMPONENTE GENERATOR
+        // 👇 Pasa la función para recibir la contraseña
+        return <Generator onPasswordGenerated={setGeneratedPassword} />; // <--- USA EL COMPONENTE GENERATOR
       case 'tools':
         return <Tools />;
       case 'vault':
       default:
-        return <Vault />;
+        // 👇 Pasa la contraseña generada al Vault
+        return <Vault generatedPassword={generatedPassword} />;
     }
   };
 

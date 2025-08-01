@@ -7,11 +7,11 @@ import AddCredentialModal from '../AddCredentialModal/AddCredentialModal';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
-import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { encryptData } from '../../utils/encryption';
 import './Vault.css';
 
-const Vault = () => {
+const Vault = ({ generatedPassword }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // 👈 ESTADO PARA EL MODAL DE ELIMINACIÓN
   const [credentialToDelete, setCredentialToDelete] = useState(null); // 👈 ESTADO PARA GUARDAR EL ID A ELIMINAR
@@ -22,6 +22,7 @@ const Vault = () => {
   // --- INICIO DE CAMBIOS ---
   const [searchTerm, setSearchTerm] = useState(''); // 👈 NUEVO: Estado para el término de búsqueda
   const [filteredCredentials, setFilteredCredentials] = useState([]); // 👈 NUEVO: Estado para las credenciales filtradas
+  const [editingCredential, setEditingCredential] = useState(null); 
   // --- FIN DE CAMBIOS ---
 
   // Leer credenciales en tiempo real
@@ -54,23 +55,55 @@ const Vault = () => {
   // --- FIN DE CAMBIOS ---
 
   // Guardar nueva credencial
+  // 👇 MODIFICADO: La función ahora maneja creación Y actualización
   const handleSaveCredential = async (data) => {
     if (!currentUser) return;
-    try {
-      // 👇 ENCRIPTA LA CONTRASEÑA ANTES DE GUARDAR
-      const encryptedPassword = encryptData(data.password, currentUser.uid);
 
-      await addDoc(collection(db, 'credentials'), {
-        name: data.name,
-        email: data.email,
-        password: encryptedPassword, // 👈 GUARDA LA CONTRASEÑA ENCRIPTADA
-        userId: currentUser.uid,
-      });
-      setShowModal(false);
+    // Si hay una nueva contraseña, la encriptamos. Si no, no la tocamos.
+    let finalPassword = editingCredential ? editingCredential.password : '';
+    if (data.password) {
+      finalPassword = encryptData(data.password, currentUser.uid);
+    }
+
+    const credentialData = {
+      name: data.name,
+      email: data.email,
+      password: finalPassword,
+      userId: currentUser.uid,
+    };
+
+    try {
+      if (editingCredential) {
+        // MODO EDICIÓN: Actualiza el documento existente
+        const credRef = doc(db, 'credentials', editingCredential.id);
+        await updateDoc(credRef, credentialData);
+      } else {
+        // MODO CREACIÓN: Añade un nuevo documento
+        await addDoc(collection(db, 'credentials'), credentialData);
+      }
+      closeModal();
     } catch (error) {
       console.error("Error al guardar la credencial:", error);
     }
   };
+
+  // --- INICIO DE CAMBIOS ---
+  // 👇 NUEVO: Funciones para abrir y cerrar el modal en modo edición o creación
+  const openEditModal = (credential) => {
+    setEditingCredential(credential);
+    setShowAddModal(true);
+  };
+
+  const openAddModal = () => {
+    setEditingCredential(null);
+    setShowAddModal(true);
+  }
+
+  const closeModal = () => {
+    setShowAddModal(false);
+    setEditingCredential(null);
+  }
+  // --- FIN DE CAMBIOS ---
 
   // 👇 FUNCIÓN PARA ABRIR EL MODAL DE CONFIRMACIÓN
   const openDeleteConfirm = (id) => {
@@ -93,14 +126,14 @@ const Vault = () => {
 
   return (
     <div className="vault-container">
-      {showAddModal && <AddCredentialModal onSave={handleSaveCredential} onClose={() => setShowAddModal(false)} />}
-      {/* 👇 MUESTRA EL MODAL DE CONFIRMACIÓN SI ES NECESARIO */}
-      {showDeleteModal && (
-        <ConfirmDeleteModal
-          onConfirm={handleDeleteCredential}
-          onCancel={() => setShowDeleteModal(false)}
+      {showAddModal && 
+        <AddCredentialModal 
+          onSave={handleSaveCredential} 
+          onClose={closeModal} 
+          existingData={editingCredential}
+          generatedPassword={generatedPassword} 
         />
-      )}
+      }{showDeleteModal && <ConfirmDeleteModal onConfirm={handleDeleteCredential} onCancel={() => setShowDeleteModal(false)} />}
 
       <div className="search-bar-wrapper">
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
@@ -131,13 +164,15 @@ const Vault = () => {
               name={cred.name}
               email={cred.email}
               encryptedPassword={cred.password}
+              onEdit={() => openEditModal(cred)}
               onDelete={() => openDeleteConfirm(cred.id)}
             />
           ))
         )}
       </div>
 
-      <button onClick={() => setShowAddModal(true)} className="add-credential-button">
+      {/* El botón ahora usa la nueva función para abrir el modal en modo "añadir" */}
+      <button onClick={openAddModal} className="add-credential-button">
         <FontAwesomeIcon icon={faPlus} />
         Añadir credencial
       </button>

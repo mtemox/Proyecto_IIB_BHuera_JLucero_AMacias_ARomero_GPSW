@@ -1,15 +1,37 @@
 // src/components/AddCredentialModal/AddCredentialModal.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // 👈 IMPORTA
+import { faMagic } from '@fortawesome/free-solid-svg-icons'; // 👈 IMPORTA
 import './AddCredentialModal.css';
 
-const AddCredentialModal = ({ onSave, onClose }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+// Ahora acepta una prop `existingData`
+const AddCredentialModal = ({ onSave, onClose, existingData, generatedPassword }) => {
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm();
+
+  // Determina si estamos en modo de edición
+  const isEditMode = !!existingData;
+
+  // Si estamos en modo de edición, llena el formulario con los datos existentes
+  useEffect(() => {
+    if (isEditMode) {
+      reset(existingData);
+    }
+  }, [isEditMode, existingData, reset]);
+
+  // 👇 NUEVO: Función para usar la contraseña generada
+  const useGeneratedPassword = () => {
+    if (generatedPassword) {
+      // 'setValue' actualiza el valor de un campo del formulario
+      setValue('password', generatedPassword, { shouldValidate: true });
+    }
+  };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Añadir Nueva Credencial</h2>
+        {/* El título cambia dinámicamente */}
+        <h2>{isEditMode ? 'Editar Credencial' : 'Añadir Nueva Credencial'}</h2>
         <form onSubmit={handleSubmit(onSave)}>
           <div className="form-group">
             <label>Nombre del Sitio</label>
@@ -23,7 +45,20 @@ const AddCredentialModal = ({ onSave, onClose }) => {
           </div>
           <div className="form-group">
             <label>Contraseña</label>
-            <input type="password" {...register('password', { required: true })} />
+            {/* En modo edición, no mostramos la contraseña anterior por seguridad */}
+            <div className="password-field-group"> {/* 👈 NUEVO: Contenedor */}
+              <input 
+                type="password" 
+                {...register('password', { required: !isEditMode })} 
+                placeholder={isEditMode ? 'Dejar en blanco para no cambiar' : ''} 
+              />
+              {/* 👇 NUEVO: Botón para usar la contraseña generada */}
+              {generatedPassword && (
+                <button type="button" className="use-generated-btn" title="Usar contraseña generada" onClick={useGeneratedPassword}>
+                  <FontAwesomeIcon icon={faMagic} />
+                </button>
+              )}
+            </div>
             {errors.password && <span className="error">Este campo es requerido.</span>}
           </div>
           <div className="modal-actions">
