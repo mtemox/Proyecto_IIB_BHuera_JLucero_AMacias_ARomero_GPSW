@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "Key+",
+    "version": "1.0",
+    "description": "Un gestor de contraseñas seguro y fácil de usar.",
+    "permissions": [
+        "storage"
+    ],
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": {
+            "16": "key-icon-16.png",
+            "48": "key-icon-48.png",
+            "128": "key-icon-128.png"
+        }
+    },
+    "icons": {
+        "16": "key-icon-16.png",
+        "48": "key-icon-48.png",
+        "128": "key-icon-128.png"
+    }
+}

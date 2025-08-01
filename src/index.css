@@ -1,0 +1,49 @@
+
+
+/* 1. Reseteo de estilos y fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background-color: var(--color-bg-light);
+  color: var(--color-text-primary);
+}
+
+/* 2. Definición de la paleta de colores del prototipo */
+:root {
+  /* Paleta Principal (Naranja) */
+  --color-primary: #f97316; /* Naranja principal (botones, acentos) */
+  --color-primary-dark: #ea580c; /* Naranja más oscuro (hover) */
+  --color-primary-light: #orange-100; /* Naranja claro para fondos de íconos */
+
+  /* Tonos Neutros */
+  --color-bg-light: #FFFFFF; /* Fondo principal (blanco) */
+  --color-bg-secondary: #F9FAFB; /* Gris muy claro para footer o secciones */
+  --color-border: #E5E7EB; /* Bordes de elementos */
+
+  /* Colores de Texto */
+  --color-text-primary: #1F2937; /* Texto principal oscuro */
+  --color-text-secondary: #6B7280; /* Texto secundario más claro */
+  --color-text-accent: #f97316; /* Texto con acento naranja */
+  --color-text-light: #FFFFFF; /* Texto sobre fondos oscuros */
+
+  /* Colores de Estado */
+  --color-success: #10B981; /* Verde para éxito */
+  --color-error: #EF4444; /* Rojo para errores */
+}
+
+/* 3. Estilo para el contenedor de la extensión */
+#root {
+    width: 350px;
+    height: 550px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Esto es importante para mantener las esquinas redondeadas */
+}

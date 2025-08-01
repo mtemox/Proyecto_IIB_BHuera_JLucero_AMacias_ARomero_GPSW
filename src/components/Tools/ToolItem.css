@@ -1,0 +1,60 @@
+/* src/components/Tools/ToolItem.css */
+.tool-item {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.tool-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.tool-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: #FFF7ED; /* bg-orange-100 */
+  border-radius: 50%;
+}
+
+.tool-icon {
+  color: var(--color-text-accent);
+  font-size: 1rem;
+}
+
+.tool-header h3 {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.tool-description {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.tool-button {
+  width: 100%;
+  padding: 0.6rem;
+  background-color: #FFF7ED; /* bg-orange-100 */
+  color: var(--color-text-accent);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tool-button:hover {
+  background-color: #FEEEDD; /* bg-orange-200 */
+}

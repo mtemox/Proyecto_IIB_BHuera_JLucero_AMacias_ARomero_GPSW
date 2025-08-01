@@ -1,0 +1,46 @@
+/* src/components/Tabs/Tabs.css */
+.tabs-navigation {
+  display: flex;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tab-button {
+  flex: 1;
+  padding: 0.85rem 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab-button:hover {
+  color: var(--color-text-accent);
+}
+
+.tab-button.active {
+  color: var(--color-text-accent);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+.tab-icon {
+  font-size: 0.8rem;
+}
+
+.content-area {
+  flex-grow: 1; /* Hace que el contenido ocupe el espacio restante */
+  overflow-y: auto; /* Permite scroll si el contenido es muy largo */
+  padding: 1rem;
+}
+
+.tab-content {
+  color: var(--color-text-primary);
+}
