@@ -3,7 +3,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './ToolItem.css';
 
-const ToolItem = ({ icon, title, description, buttonText, buttonIcon }) => {
+const ToolItem = ({ icon, title, description, buttonText, buttonIcon, onClick }) => {
   return (
     <div className="tool-item">
       <div className="tool-header">
@@ -13,7 +13,7 @@ const ToolItem = ({ icon, title, description, buttonText, buttonIcon }) => {
         <h3>{title}</h3>
       </div>
       <p className="tool-description">{description}</p>
-      <button className="tool-button">
+      <button className="tool-button" onClick={onClick}>
         <FontAwesomeIcon icon={buttonIcon} className="tool-button-icon" />
         {buttonText}
       </button>

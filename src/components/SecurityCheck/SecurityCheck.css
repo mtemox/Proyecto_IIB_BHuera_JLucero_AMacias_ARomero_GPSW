@@ -1,0 +1,94 @@
+/* src/components/SecurityCheck/SecurityCheck.css (CORREGIDO) */
+
+.security-check-container {
+    width: 100%;
+    /* Quitamos height: 100% para que el contenedor se ajuste al espacio disponible por flexbox */
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-bg-secondary);
+    /* El padding se aplica al contenedor principal de la vista */
+    padding: 1rem;
+}
+
+.security-check-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-primary);
+  /* Esto hace que el header no se encoja */
+  flex-shrink: 0;
+}
+
+.security-check-header h2 {
+  font-size: 1.2rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.results-list {
+  /* flex-grow: 1 hace que esta lista ocupe todo el espacio vertical restante */
+  flex-grow: 1;
+  overflow-y: auto; /* Permite el scroll solo en la lista, no en toda la pantalla */
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.strength-group {
+  margin-bottom: 1.5rem;
+}
+
+.strength-group h3 {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-bg-light);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+
+.result-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-name {
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.result-email {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.result-strength {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+/* Colores de fortaleza */
+.very-weak { background-color: #ef4444; }
+.weak { background-color: #f97316; }
+.medium { background-color: #eab308; }
+.strong { background-color: #22c55e; }
+.very-strong { background-color: #10b981; }

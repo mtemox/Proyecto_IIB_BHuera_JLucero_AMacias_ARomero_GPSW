@@ -9,7 +9,7 @@ import Tools from '../Tools/Tools';
 
 const ToolsContent = () => <div className="tab-content">Contenido de Herramientas</div>;
 
-const Tabs = () => {
+const Tabs = ({ onStartSecurityCheck, allCredentials }) => {
 
   // 👇 NUEVO: Estado para guardar la contraseña generada
   const [generatedPassword, setGeneratedPassword] = useState('');
@@ -21,8 +21,12 @@ const Tabs = () => {
         // 👇 Pasa la función para recibir la contraseña
         return <Generator onPasswordGenerated={setGeneratedPassword} />; // <--- USA EL COMPONENTE GENERATOR
       case 'tools':
-        return <Tools />;
-      case 'vault':
+        // 👇 PASA ambas props a Tools
+        return <Tools 
+          onStartSecurityCheck={onStartSecurityCheck} 
+          allCredentials={allCredentials} 
+        />;
+        case 'vault':
       default:
         // 👇 Pasa la contraseña generada al Vault
         return <Vault generatedPassword={generatedPassword} />;

@@ -3,16 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faGlobe } from '@fortawesome/free-solid-svg-icons';
 import CredentialItem from './CredentialItem';
-import AddCredentialModal from '../AddCredentialModal/AddCredentialModal';
+import AddCredentialModal from '../CredentialForm/CredentialForm';
 import ConfirmDeleteModal from '../ConfirmDeleteModal/ConfirmDeleteModal';
 import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase';
 import { collection, addDoc, query, where, onSnapshot, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { encryptData } from '../../utils/encryption';
+import CredentialForm from '../CredentialForm/CredentialForm';
 import './Vault.css';
 
 const Vault = ({ generatedPassword }) => {
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [view, setView] = useState('list'); // 'list' o 'form'
   const [showDeleteModal, setShowDeleteModal] = useState(false); // 👈 ESTADO PARA EL MODAL DE ELIMINACIÓN
   const [credentialToDelete, setCredentialToDelete] = useState(null); // 👈 ESTADO PARA GUARDAR EL ID A ELIMINAR
   const [credentials, setCredentials] = useState([]);
@@ -75,13 +76,17 @@ const Vault = ({ generatedPassword }) => {
     try {
       if (editingCredential) {
         // MODO EDICIÓN: Actualiza el documento existente
+        setView('list'); // 👈 Regresa a la lista después de guardar
+        setEditingCredential(null);
         const credRef = doc(db, 'credentials', editingCredential.id);
         await updateDoc(credRef, credentialData);
       } else {
         // MODO CREACIÓN: Añade un nuevo documento
         await addDoc(collection(db, 'credentials'), credentialData);
       }
-      closeModal();
+
+      cancelForm();
+
     } catch (error) {
       console.error("Error al guardar la credencial:", error);
     }
@@ -91,18 +96,18 @@ const Vault = ({ generatedPassword }) => {
   // 👇 NUEVO: Funciones para abrir y cerrar el modal en modo edición o creación
   const openEditModal = (credential) => {
     setEditingCredential(credential);
-    setShowAddModal(true);
+    setView('form'); // 👈 Cambia a la vista de formulario
   };
 
   const openAddModal = () => {
     setEditingCredential(null);
-    setShowAddModal(true);
-  }
+    setView('form'); // 👈 Cambia a la vista de formulario
+  };
 
-  const closeModal = () => {
-    setShowAddModal(false);
+  const cancelForm = () => {
+    setView('list'); // 👈 Regresa a la lista
     setEditingCredential(null);
-  }
+  };
   // --- FIN DE CAMBIOS ---
 
   // 👇 FUNCIÓN PARA ABRIR EL MODAL DE CONFIRMACIÓN
@@ -126,16 +131,21 @@ const Vault = ({ generatedPassword }) => {
 
   return (
     <div className="vault-container">
-      {showAddModal && 
-        <AddCredentialModal 
-          onSave={handleSaveCredential} 
-          onClose={closeModal} 
-          existingData={editingCredential}
-          generatedPassword={generatedPassword} 
-        />
-      }{showDeleteModal && <ConfirmDeleteModal onConfirm={handleDeleteCredential} onCancel={() => setShowDeleteModal(false)} />}
+    
+      {showDeleteModal && <ConfirmDeleteModal onConfirm={handleDeleteCredential} onCancel={() => setShowDeleteModal(false)} />}
 
-      <div className="search-bar-wrapper">
+      {/* El botón ahora usa la nueva función para abrir el modal en modo "añadir" */}
+      {view === 'form' ? (
+      <CredentialForm 
+        onSave={handleSaveCredential} 
+        onCancel={cancelForm}
+        existingData={editingCredential}
+        generatedPassword={generatedPassword} 
+      />
+    ) : (
+      // 👇 ENVUELVE LA LISTA Y LA BÚSQUEDA EN UN FRAGMENT (<>)
+      <>
+        <div className="search-bar-wrapper">
         <FontAwesomeIcon icon={faSearch} className="search-icon" />
         {/* 👇 CONECTA EL INPUT AL ESTADO */}
         <input
@@ -147,7 +157,7 @@ const Vault = ({ generatedPassword }) => {
         />
       </div>
 
-      <div className="credentials-list">
+        <div className="credentials-list">
         {loading ? (
           <p className="status-text">Cargando...</p>
         ) : credentials.length === 0 ? (
@@ -171,11 +181,12 @@ const Vault = ({ generatedPassword }) => {
         )}
       </div>
 
-      {/* El botón ahora usa la nueva función para abrir el modal en modo "añadir" */}
-      <button onClick={openAddModal} className="add-credential-button">
-        <FontAwesomeIcon icon={faPlus} />
-        Añadir credencial
-      </button>
+        <button onClick={openAddModal} className="add-credential-button">
+          <FontAwesomeIcon icon={faPlus} />
+          Añadir credencial
+        </button>
+      </>
+    )}
     </div>
   );
 };
