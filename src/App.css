@@ -5,3 +5,37 @@
   display: flex;
   flex-direction: column;
 }
+
+.splash-screen {
+  position: relative; /* Necesario para el círculo de fondo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  background: white; /* Gradiente naranja */
+  color: white;
+  overflow: hidden; /* Evita que el círculo se salga */
+  transition: opacity 0.5s ease-out;
+  opacity: 1;
+}
+
+.splash-screen.fade-out {
+  opacity: 0;
+}
+
+.splash-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.splash-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.splash-logo {
+  width: 250px; /* Ajusta el tamaño de tu logo como prefieras */
+  height: auto;
+  margin-bottom: 1rem;
+}

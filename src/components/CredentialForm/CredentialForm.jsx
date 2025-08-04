@@ -12,9 +12,24 @@ const CredentialForm = ({ onSave, onCancel, existingData, generatedPassword }) =
   useEffect(() => {
     if (isEditMode) {
       reset(existingData);
+    } else {
+      // 👇 SÓLO EJECUTAR SI ESTAMOS EN EL CONTEXTO DE UNA EXTENSIÓN
+      if (chrome && chrome.tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (tabs && tabs[0] && tabs[0].url) {
+            try {
+              const url = new URL(tabs[0].url);
+              setValue('url', url.hostname);
+            } catch (e) {
+              console.log("No es una URL válida para autocompletar.");
+            }
+          }
+        });
+      }
     }
-  }, [isEditMode, existingData, reset]);
+  }, [isEditMode, existingData, reset, setValue]);
 
+  // 👇👇 CORRECCIÓN AQUÍ: Esta función faltaba 👇👇
   const useGeneratedPassword = () => {
     if (generatedPassword) {
       setValue('password', generatedPassword, { shouldValidate: true });
@@ -31,6 +46,14 @@ const CredentialForm = ({ onSave, onCancel, existingData, generatedPassword }) =
           <input {...register('name', { required: true })} placeholder="Ej: Google, Facebook..." />
           {errors.name && <span className="error">Este campo es requerido.</span>}
         </div>
+
+        {/* 👇👇 NUEVO CAMPO PARA LA URL 👇👇 */}
+        <div className="form-group">
+          <label>URL del Sitio Web</label>
+          <input {...register('url', { required: true })} placeholder="ejemplo.com" />
+          {errors.url && <span className="error">Este campo es requerido.</span>}
+        </div>
+
         <div className="form-group">
           <label>Correo o Usuario</label>
           <input {...register('email', { required: true })} placeholder="usuario@ejemplo.com" />

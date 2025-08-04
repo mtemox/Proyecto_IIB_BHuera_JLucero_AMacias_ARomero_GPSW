@@ -68,6 +68,7 @@ const Vault = ({ generatedPassword }) => {
 
     const credentialData = {
       name: data.name,
+      url: data.url,
       email: data.email,
       password: finalPassword,
       userId: currentUser.uid,

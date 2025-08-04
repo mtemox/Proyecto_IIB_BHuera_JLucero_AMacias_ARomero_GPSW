@@ -21,12 +21,20 @@ const CredentialItem = ({ icon, name, email, encryptedPassword, onEdit, onDelete
     ? decryptData(encryptedPassword, currentUser.uid)
     : '••••••••••';
 
-  const handleCopy = () => {
+  // 👇👇 CORRECCIÓN AQUÍ: Usando el método moderno y asíncrono 👇👇
+  const handleCopy = async () => {
     const passwordToCopy = decryptData(encryptedPassword, currentUser.uid);
-    navigator.clipboard.writeText(passwordToCopy);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    
+    try {
+      await navigator.clipboard.writeText(passwordToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Error al copiar la contraseña: ', err);
+      // Opcional: podrías mostrar un mensaje de error al usuario aquí
+    }
   };
+
 
   return (
     <div className="credential-item">

@@ -1,4 +1,5 @@
 // src/context/AuthContext.jsx
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from '../firebase';
 import {
@@ -20,20 +21,13 @@ export const AuthProvider = ({ children }) => {
 
   const signInWithGoogle = () => {
     return new Promise((resolve, reject) => {
-      // 1. Usamos la API nativa de Chrome para pedir el token de autenticación.
-      //    'interactive: true' hará que se muestre la ventana de login de Google.
       chrome.identity.getAuthToken({ interactive: true }, async (token) => {
-        // 2. Verificamos si hubo un error o el usuario canceló.
         if (chrome.runtime.lastError || !token) {
-          console.error(chrome.runtime.lastError);
+          console.error(chrome.runtime.lastError?.message || "No se pudo obtener el token.");
           return reject("El usuario canceló o hubo un error de autenticación.");
         }
-        
         try {
-          // 3. Creamos una credencial de Firebase usando el token de Google.
           const credential = GoogleAuthProvider.credential(null, token);
-          
-          // 4. Iniciamos sesión en Firebase con esa credencial.
           const result = await signInWithCredential(auth, credential);
           resolve(result);
         } catch (error) {
@@ -45,13 +39,24 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // Para desloguear, también debemos remover el token cacheado por Chrome.
-    chrome.identity.getAuthToken({ interactive: false }, (token) => {
-      if (token) {
-        chrome.identity.removeCachedAuthToken({ token }, () => {});
-      }
+    return new Promise((resolve, reject) => {
+      // Obtenemos el token actual para poder invalidarlo
+      chrome.identity.getAuthToken({ interactive: false }, (currentToken) => {
+        if (currentToken) {
+          // 1. Invalidamos el token de acceso de Google para forzar un nuevo login la próxima vez.
+          fetch(`https://accounts.google.com/o/oauth2/revoke?token=${currentToken}`);
+          
+          // 2. Removemos el token de la caché de Chrome
+          chrome.identity.removeCachedAuthToken({ token: currentToken }, () => {
+            // 3. Finalmente, cerramos la sesión en Firebase
+            signOut(auth).then(resolve).catch(reject);
+          });
+        } else {
+          // Si no hay token en caché, simplemente cerramos sesión en Firebase
+          signOut(auth).then(resolve).catch(reject);
+        }
+      });
     });
-    return signOut(auth);
   };
 
   useEffect(() => {
