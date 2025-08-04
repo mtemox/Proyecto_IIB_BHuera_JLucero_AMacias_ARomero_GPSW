@@ -44,7 +44,10 @@ function App() {
         ) : (
           <>
             <Header />
-            <Tabs onStartSecurityCheck={() => setAppView('securityCheck')} />
+            <Tabs 
+              onStartSecurityCheck={() => setAppView('securityCheck')} 
+              allCredentials={allCredentials}
+            />
             <Footer />
           </>
         )

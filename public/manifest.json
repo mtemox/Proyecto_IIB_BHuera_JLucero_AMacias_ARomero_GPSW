@@ -3,20 +3,32 @@
     "name": "Key+",
     "version": "1.0",
     "description": "Un gestor de contraseñas seguro y fácil de usar.",
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvRinAGDm+sg1/XWJph1dZ9ejOK89iczdRFQx620LwOwOxbQC6Y+7QQ2SHMRv5MuSEWUU1ZJjEmb1jWXDJIeOpR/vhPwEywoUKugOPYt5FiGedY6uvEP41qSZBS/+OyIFRpxUOjscoMsgNlWmzrJPRcEJUESYg+0f26G3QoLlHWGYGjccun+gxmnRHAqMrG5BGWQ/2+HWK9sT9ZM9ilbyzE4VjFIrcqagjQnE9ZIMa7LEMAMeicTlTqwRIVC3njlR710Hmu7zrrGFdwnNaf3Q1bGiP10xJJVtvzhvxqI3bMq6ExGujiUfFeUJ9O8+u6C1iSn0fOD3VxgF6QjCZs3DLQIDAQAB",
     "permissions": [
-        "storage"
+        "storage",
+        "identity"
     ],
+    "oauth2": {
+        "client_id": "768609595455-04ig0fere5g7dp1e6kpc0ljn8jiai5na.apps.googleusercontent.com",
+        "scopes": [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile"
+        ]
+    },
     "action": {
         "default_popup": "index.html",
         "default_icon": {
-            "16": "key-icon-16.png",
-            "48": "key-icon-48.png",
-            "128": "key-icon-128.png"
+        "16": "key-icon-16.png",
+        "48": "key-icon-48.png",
+        "128": "key-icon-128.png"
         }
     },
     "icons": {
         "16": "key-icon-16.png",
         "48": "key-icon-48.png",
         "128": "key-icon-128.png"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
     }
 }

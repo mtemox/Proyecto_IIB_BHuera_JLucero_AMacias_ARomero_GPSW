@@ -23,9 +23,9 @@ const Tabs = ({ onStartSecurityCheck, allCredentials }) => {
       case 'tools':
         // 👇 PASA ambas props a Tools
         return <Tools 
-          onStartSecurityCheck={onStartSecurityCheck} 
-          allCredentials={allCredentials} 
-        />;
+                  onStartSecurityCheck={onStartSecurityCheck} 
+                  allCredentials={allCredentials} 
+              />;
         case 'vault':
       default:
         // 👇 Pasa la contraseña generada al Vault
